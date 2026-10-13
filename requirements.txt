@@ -5,3 +5,4 @@ PyMuPDF
 python-docx
 Pillow
 google-genai
+gunicorn
