@@ -24,22 +24,22 @@ from config import (
     GEMINI_MODEL,
 )
 
-from services.resume_parser import (
+from resume_parser import (
     extract_resume_text,
     analyze_text_resume,
 )
 
-from services.resume_validator import (
+from resume_validator import (
     validate_text_resume,
     validate_gemini_result,
 )
 
-from services.company_match import (
+from company_match import (
     get_company_current_jobs,
     gemini_company_match,
 )
 
-from services.vacancy_finder import (
+from vacancy_finder import (
     adzuna_request,
     get_resume_based_vacancies,
 )
