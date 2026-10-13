@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis & Guidance Report - {{ candidate_name or 'Candidate' }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #583b82;
+            --primary-hover: #462c6b;
+            --primary-light: #f4eefb;
+            --primary-border: #e3d7f2;
+            --royal-accent: #7a52aa;
+            --bg-start: #f7f2fc;
+            --bg-end: #edf3fa;
+            --surface: rgba(255, 255, 255, 0.95);
+            --border: #e6ddf2;
+            --text-main: #2b2438;
+            --text-muted: #6e647e;
+            --shadow-sm: 0 4px 14px rgba(78, 52, 107, 0.05);
+            --shadow-md: 0 10px 28px rgba(78, 52, 107, 0.08);
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --tag-bg: #f3ecfb;
+            --tag-text: #533878;
+            --warn-bg: #fff5eb;
+            --warn-text: #8c4a16;
+            --warn-border: #fcdfc4;
+            --success-bg: #edf8ee;
+            --success-text: #266b2c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            color: var(--text-main);
+            padding: 36px 16px 64px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: min(1040px, 100%);
+            margin: 0 auto;
+        }
+
+        /* Top Header */
+        .top-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 14px;
+            background: #ede6f7;
+            border: 1px solid #dcceef;
+            border-radius: 30px;
+            color: var(--primary);
+            font-size: 11.5px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .top-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .top-header p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* Card container */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 26px 28px;
+            margin-bottom: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0e9f7;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title-icon {
+            font-size: 19px;
+        }
+
+        /* Candidate Profile Grid */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .profile-tile {
+            background: #faf7fd;
+            border: 1px solid #ede5f5;
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+
+        .profile-tile-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .profile-tile-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Tags */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            background: var(--tag-bg);
+            border: 1px solid var(--primary-border);
+            color: var(--tag-text);
+            padding: 6px 13px;
+            border-radius: 20px;
+            font-size: 13.5px;
+            font-weight: 500;
+        }
+
+        .warning-tag {
+            background: var(--warn-bg);
+            border: 1px solid var(--warn-border);
+            color: var(--warn-text);
+            padding: 6px 13px;
+            border-radius: 20px;
+            font-size: 13.5px;
+            font-weight: 600;
+        }
+
+        .role-tag {
+            background: #eef5fc;
+            border: 1px solid #d4e4f7;
+            color: #235284;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13.5px;
+            font-weight: 600;
+        }
+
+        /* Company Match Block */
+        .match-card {
+            background: linear-gradient(135deg, #fdfbfe 0%, #f7f1fc 100%);
+            border: 1px solid #dfd1ee;
+        }
+
+        .match-layout {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .match-score-box {
+            text-align: center;
+            padding: 20px 14px;
+            background: #ffffff;
+            border: 1px solid #e1d3f0;
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 16px rgba(88, 59, 130, 0.08);
+        }
+
+        .match-score-number {
+            font-size: 44px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .match-score-unit {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .match-score-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+
+        .match-details h3 {
+            font-size: 17px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .match-details p {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        /* Course Cards */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 16px;
+        }
+
+        .course-card {
+            background: #ffffff;
+            border: 1px solid #e6ddf2;
+            border-radius: var(--radius-md);
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-2px);
+            border-color: #cbbee0;
+        }
+
+        .course-skill-badge {
+            align-self: flex-start;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: var(--warn-bg);
+            color: var(--warn-text);
+            margin-bottom: 8px;
+        }
+
+        .course-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .course-meta {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .course-link {
+            display: inline-block;
+            text-align: center;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            background: var(--primary);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s ease;
+        }
+
+        .course-link:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Education & Projects */
+        .info-card-item {
+            background: #faf7fd;
+            border: 1px solid #eee6f7;
+            border-radius: var(--radius-md);
+            padding: 16px 18px;
+            margin-bottom: 12px;
+        }
+
+        .info-card-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-main-title {
+            font-size: 15.5px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .item-badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a346e;
+            background: #ede6f7;
+            padding: 3px 9px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .item-description {
+            font-size: 13.5px;
+            color: #3b334a;
+            line-height: 1.6;
+        }
+
+        /* Vacancy Cards */
+        .vacancy-notice {
+            background: #fbf9fe;
+            border: 1px solid #ebdff5;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            color: #5c4f6f;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .vacancy-card {
+            background: #ffffff;
+            border: 1px solid #e5daf0;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: border-color 0.2s ease;
+        }
+
+        .vacancy-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .vacancy-card:hover {
+            border-color: #b9a2d6;
+        }
+
+        .vacancy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .vacancy-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .vacancy-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .vacancy-company {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a3a60;
+            margin-bottom: 4px;
+        }
+
+        .vacancy-location {
+            font-size: 13px;
+            color: #756988;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .vacancy-desc {
+            font-size: 13.5px;
+            color: #423850;
+            line-height: 1.55;
+            margin-bottom: 14px;
+        }
+
+        .vacancy-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f4eff9;
+        }
+
+        .vacancy-salary {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2b6c32;
+            background: #eef8ef;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .apply-btn {
+            padding: 9px 18px;
+            background: var(--primary);
+            color: #ffffff;
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s ease;
+        }
+
+        .apply-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .empty-box {
+            color: var(--text-muted);
+            font-size: 14px;
+            padding: 12px 0;
+            font-style: italic;
+        }
+
+        /* Back to login button */
+        .back-nav {
+            text-align: center;
+            margin-top: 36px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            background: #ffffff;
+            color: var(--primary);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 14.5px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--primary);
+            background: #faf6fd;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 680px) {
+            .match-layout {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                padding: 20px 16px;
+            }
+            .vacancy-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="top-header">
+        <div class="badge-pill">Verified Analysis & Guidance</div>
+        <h1>Candidate Evaluation Report</h1>
+        <p>Comprehensive resume extraction, verified company requirements match, and Tamil Nadu live vacancies.</p>
+    </div>
+
+
+    <!-- 1. CANDIDATE PROFILE -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-title-icon">👤</span>
+                Candidate Profile
+            </div>
+        </div>
+
+        <div class="profile-grid">
+            <div class="profile-tile">
+                <div class="profile-tile-label">Candidate Name</div>
+                <div class="profile-tile-value">{{ candidate_name or 'Not Available' }}</div>
+            </div>
+
+            <div class="profile-tile">
+                <div class="profile-tile-label">Register Number</div>
+                <div class="profile-tile-value">{{ register_number or 'Not Available' }}</div>
+            </div>
+
+            <div class="profile-tile">
+                <div class="profile-tile-label">Target Company</div>
+                <div class="profile-tile-value">{{ target_company or 'Not Available' }}</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 2. RESUME SKILLS -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-title-icon">⚡</span>
+                Resume Technical Skills
+            </div>
+        </div>
+
+        {% if skills %}
+            <div class="tag-cloud">
+                {% for skill in skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-box">No explicit technical skills found.</div>
+        {% endif %}
+    </div>
+
+
+    <!-- 3. PROBABLE JOB ROLES -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-title-icon">🎯</span>
+                Probable Job Roles
+            </div>
+        </div>
+
+        {% if probable_roles %}
+            <div class="tag-cloud">
+                {% for role in probable_roles %}
+                    <span class="role-tag">{{ role }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-box">No probable job roles determined.</div>
+        {% endif %}
+    </div>
+
+
+    <!-- 4. TARGET COMPANY MATCH -->
+    <div class="card match-card">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-title-icon">🏢</span>
+                {{ target_company }} Match Analysis
+            </div>
+        </div>
+
+        {% if match_percentage is not none %}
+            <div class="match-layout">
+                <div class="match-score-box">
+                    <div class="match-score-number">
+                        {{ match_percentage }}<span class="match-score-unit">%</span>
+                    </div>
+                    <div class="match-score-label">Match Score</div>
+                </div>
+
+                <div class="match-details">
+                    <h3>Compatibility with {{ target_company }}</h3>
+                    <p>{{ company_message or 'Match percentage calculated against verifiable requirements.' }}</p>
+                    <div style="font-size: 12.5px; color: #766986;">
+                        ℹ️ Calculated purely from current company job requirements and candidate skills. No hardcoded or dummy percentages.
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-box">
+                {{ company_message or 'A reliable match could not be calculated because verified current job requirements for this company could not be retrieved at this time.' }}
+            </div>
+        {% endif %}
+    </div>
+
+
+    <!-- 5. SKILLS TO IMPROVE -->
+    {% if missing_skills %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span class="card-title-icon">📈</span>
+                    Skills to Improve for {{ target_company }}
+                </div>
+            </div>
+
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 14px;">
+                These requirements are expected by {{ target_company }} and are not yet covered in your resume:
+            </p>
+
+            <div class="tag-cloud">
+                {% for skill in missing_skills %}
+                    <span class="warning-tag">⚠️ {{ skill }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+
+    <!-- 6. RECOMMENDED COURSES (SHOWN ONLY WHEN IMPROVEMENT SKILLS EXIST) -->
+    {% if missing_skills and recommended_courses %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span class="card-title-icon">🎓</span>
+                    Recommended Courses to Bridge Skill Gaps
+                </div>
+            </div>
+
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px;">
+                Curated learning pathways directly targeting the improvement skills identified above:
+            </p>
+
+            <div class="courses-grid">
+                {% for course in recommended_courses %}
+                    <div class="course-card">
+                        <div>
+                            {% if course.skill %}
+                                <div class="course-skill-badge">Skill: {{ course.skill }}</div>
+                            {% endif %}
+                            <div class="course-title">{{ course.name }}</div>
+                            <div class="course-meta">
+                                <span>🏛️ {{ course.provider or 'Online' }}</span>
+                                <span>🏷️ {{ course.status or 'Available' }}</span>
+                            </div>
+                        </div>
+
+                        {% if course.url %}
+                            <a class="course-link" href="{{ course.url }}" target="_blank" rel="noopener noreferrer">
+                                Explore Course →
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+
+    <!-- 7. EDUCATION -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-title-icon">📖</span>
+                Education
+            </div>
+        </div>
+
+        {% if education %}
+            {% for item in education %}
+                <div class="info-card-item">
+                    <div class="item-description" style="font-weight: 500;">
+                        {{ item }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-box">No details found.</div>
+        {% endif %}
+    </div>
+
+
+    <!-- 8. CERTIFICATIONS -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-title-icon">📜</span>
+                Certifications
+            </div>
+        </div>
+
+        {% if certifications %}
+            {% for cert in certifications %}
+                <div class="info-card-item">
+                    <div class="item-description" style="font-weight: 600; color: #43325e;">
+                        ✓ {{ cert }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-box">No details found.</div>
+        {% endif %}
+    </div>
+
+
+    <!-- 9. PROJECTS -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-title-icon">💻</span>
+                Projects
+            </div>
+        </div>
+
+        {% if projects %}
+            {% for project in projects %}
+                <div class="info-card-item">
+                    <div class="item-main-title">{{ project.title }}</div>
+
+                    {% if project.tech_stack %}
+                        <div class="item-badge">
+                            🛠️ Tech Stack: {{ project.tech_stack }}
+                        </div>
+                    {% endif %}
+
+                    {% if project.description %}
+                        <div class="item-description">
+                            {{ project.description }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-box">No details found.</div>
+        {% endif %}
+    </div>
+
+
+    <!-- 10. INTERNSHIP -->
+    {% if internship %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span class="card-title-icon">💼</span>
+                    Internship
+                </div>
+            </div>
+
+            {% for item in internship %}
+                <div class="info-card-item">
+                    <div class="item-description">{{ item }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
+    <!-- 11. WORK EXPERIENCE -->
+    {% if experience %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span class="card-title-icon">🏢</span>
+                    Work Experience
+                </div>
+            </div>
+
+            {% for item in experience %}
+                <div class="info-card-item">
+                    <div class="item-description">{{ item }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
+    <!-- 12. REAL-TIME TAMIL NADU VACANCIES -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="card-title-icon">📍</span>
+                Real-Time Tamil Nadu Vacancies
+            </div>
+        </div>
+
+        <div class="vacancy-notice">
+            <span>ℹ️</span>
+            <span>
+                Vacancies are retrieved live from Adzuna exclusively based on your resume skills and probable roles. The target company does not influence this search.
+            </span>
+        </div>
+
+        {% if vacancies %}
+            {% for job in vacancies %}
+                <div class="vacancy-card">
+                    <div class="vacancy-header">
+                        <div class="vacancy-title">{{ job.title }}</div>
+                        {% if job.created %}
+                            <div class="vacancy-date">📅 {{ job.created }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="vacancy-company">🏢 {{ job.company }}</div>
+                    <div class="vacancy-location">📍 {{ job.location }}</div>
+
+                    {% if job.description %}
+                        <div class="vacancy-desc">{{ job.description }}</div>
+                    {% endif %}
+
+                    {% if job.matched_skills %}
+                        <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                            <span style="font-size: 11.5px; font-weight: 600; color: #6e647e;">Matched Skills:</span>
+                            {% for ms in job.matched_skills %}
+                                <span class="skill-tag" style="font-size: 11.5px; padding: 2px 8px;">{{ ms }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="vacancy-footer">
+                        <div class="vacancy-salary">
+                            💰 {{ job.salary or 'Competitive / Not Disclosed' }}
+                        </div>
+
+                        {% if job.url %}
+                            <a class="apply-btn" href="{{ job.url }}" target="_blank" rel="noopener noreferrer">
+                                View / Apply Job →
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-box">
+                No current resume-relevant vacancies were found in Tamil Nadu at this time.
+            </div>
+        {% endif %}
+    </div>
+
+
+    <!-- BACK TO LOGIN BUTTON -->
+    <div class="back-nav">
+        <a class="back-btn" href="{{ url_for('index') }}">
+            <span>←</span>
+            <span>Back to Login / Upload</span>
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

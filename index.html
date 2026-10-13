@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Screening & Career Guidance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #583b82;
+            --primary-hover: #462c6b;
+            --primary-light: #f3ecfb;
+            --accent-gold: #c59b27;
+            --bg-start: #f7f2fc;
+            --bg-end: #edf3fa;
+            --surface: rgba(255, 255, 255, 0.95);
+            --border: #e6ddf2;
+            --text-main: #2b2438;
+            --text-muted: #6e647e;
+            --shadow: 0 16px 40px rgba(78, 52, 107, 0.08);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 16px;
+        }
+
+        .auth-container {
+            width: min(540px, 100%);
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            background: #ede6f7;
+            border: 1px solid #dcd0ef;
+            border-radius: 30px;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .brand-header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.3;
+        }
+
+        .brand-header p {
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .card {
+            background: var(--surface);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            box-shadow: var(--shadow);
+        }
+
+        .flash-box {
+            background: #fff1f0;
+            border: 1px solid #fed2ce;
+            border-left: 4px solid #d9483b;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            color: #8c271d;
+            font-size: 13.5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .field-group {
+            margin-bottom: 18px;
+        }
+
+        .field-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #4a3a60;
+        }
+
+        .field-group input[type="text"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #dcd1ea;
+            border-radius: var(--radius-md);
+            background: #faf8fd;
+            color: var(--text-main);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .field-group input[type="text"]:focus {
+            border-color: var(--primary);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(88, 59, 130, 0.12);
+        }
+
+        .field-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .file-dropzone {
+            border: 2px dashed #cfc1e3;
+            border-radius: var(--radius-md);
+            background: #faf7fd;
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .file-dropzone:hover, .file-dropzone.dragover {
+            border-color: var(--primary);
+            background: #f4eefb;
+        }
+
+        .file-dropzone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+
+        .file-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .file-subtext {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .selected-file-name {
+            display: none;
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2e6930;
+            background: #eaf6eb;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, #462c6b 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(88, 59, 130, 0.25);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(88, 59, 130, 0.35);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Loading overlay */
+        .loading-state {
+            display: none;
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .spinner {
+            width: 42px;
+            height: 42px;
+            border: 3.5px solid #e9e1f5;
+            border-top: 3.5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .loading-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .footer-info {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 12px;
+            color: #7d728e;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px 18px;
+            }
+            .brand-header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+
+    <div class="brand-header">
+        <div class="brand-badge">
+            AI Resume & Career Guidance
+        </div>
+        <h1>Resume Screening & Vacancy Finder</h1>
+        <p>Extract structured resume insights, evaluate company match, and discover real vacancies in Tamil Nadu.</p>
+    </div>
+
+    <div class="card">
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-box">
+                        <span>⚠️</span>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form id="uploadForm" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+
+            <div class="field-group">
+                <label for="name">Candidate Name</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="e.g. Anuviruntha Sri B"
+                    required
+                    autocomplete="name"
+                >
+            </div>
+
+            <div class="field-group">
+                <label for="register_number">Register Number</label>
+                <input
+                    type="text"
+                    id="register_number"
+                    name="register_number"
+                    placeholder="e.g. 241AI002"
+                    required
+                >
+            </div>
+
+            <div class="field-group">
+                <label for="target_company">Target Company</label>
+                <input
+                    type="text"
+                    id="target_company"
+                    name="target_company"
+                    placeholder="e.g. TCS, Zoho, Infosys, Novitech"
+                    required
+                >
+                <div class="field-hint">
+                    Used strictly for company requirement matching and skills-to-improve analysis.
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label>Resume Document</label>
+                <div class="file-dropzone" id="dropzone">
+                    <input
+                        type="file"
+                        id="resume"
+                        name="resume"
+                        accept=".pdf,.docx,.txt,.rtf,.jpg,.jpeg,.png,.webp"
+                        required
+                        onchange="handleFileSelect(this)"
+                    >
+                    <div class="file-icon">📄</div>
+                    <div class="file-label" id="fileLabel">Click to upload or drag resume here</div>
+                    <div class="file-subtext">PDF, DOCX, TXT, RTF, JPG, PNG, WEBP (Max 15MB)</div>
+                    <div class="selected-file-name" id="selectedFile" style="display:none;"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span>Analyze Resume & Find Vacancies</span>
+                <span>→</span>
+            </button>
+
+        </form>
+
+        <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <div class="loading-title">Analyzing Your Resume Profile</div>
+            <div class="loading-desc">
+                Validating resume structure, checking company requirements, and searching live Tamil Nadu vacancies via Adzuna API...
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-info">
+        Verified Data Processing • Real-Time Tamil Nadu Vacancies • Zero Fake Percentage
+    </div>
+
+</div>
+
+<script>
+    function handleFileSelect(input) {
+        const file = input.files[0];
+        const selectedFileDiv = document.getElementById('selectedFile');
+        const fileLabel = document.getElementById('fileLabel');
+
+        if (file) {
+            selectedFileDiv.textContent = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+            selectedFileDiv.style.display = 'inline-block';
+            fileLabel.textContent = 'Change resume file';
+        } else {
+            selectedFileDiv.style.display = 'none';
+            fileLabel.textContent = 'Click to upload or drag resume here';
+        }
+    }
+
+    const dropzone = document.getElementById('dropzone');
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+        }, false);
+    });
+
+    const form = document.getElementById('uploadForm');
+    const loadingState = document.getElementById('loadingState');
+
+    form.addEventListener('submit', function() {
+        form.style.display = 'none';
+        loadingState.style.display = 'block';
+    });
+</script>
+
+</body>
+</html>
