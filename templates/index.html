@@ -1,430 +1,324 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Screening & Career Guidance</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <title>Resume Screening Results</title>
     <style>
-        :root {
-            --primary: #583b82;
-            --primary-hover: #462c6b;
-            --primary-light: #f3ecfb;
-            --accent-gold: #c59b27;
-            --bg-start: #f7f2fc;
-            --bg-end: #edf3fa;
-            --surface: rgba(255, 255, 255, 0.95);
-            --border: #e6ddf2;
-            --text-main: #2b2438;
-            --text-muted: #6e647e;
-            --shadow: 0 16px 40px rgba(78, 52, 107, 0.08);
-            --radius-lg: 20px;
-            --radius-md: 12px;
-            --radius-sm: 8px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 28px 16px;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fc;
+            color: #1e293b;
         }
 
-        .auth-container {
-            width: min(540px, 100%);
+        header {
+            background: #172554;
+            color: white;
+            padding: 22px 7%;
         }
 
-        .brand-header {
-            text-align: center;
-            margin-bottom: 24px;
+        header h2 { margin: 0; }
+
+        main {
+            max-width: 1050px;
+            margin: 30px auto;
+            padding: 0 18px;
         }
 
-        .brand-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 14px;
-            background: #ede6f7;
-            border: 1px solid #dcd0ef;
-            border-radius: 30px;
-            color: var(--primary);
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
+        h1 { color: #172554; }
 
-        .brand-header h1 {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--primary);
-            line-height: 1.3;
-        }
-
-        .brand-header p {
-            margin-top: 8px;
-            font-size: 14px;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
+        .subtitle { color: #64748b; }
 
         .card {
-            background: var(--surface);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 32px 28px;
-            box-shadow: var(--shadow);
+            background: white;
+            padding: 22px;
+            margin: 18px 0;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px #0f172a0b;
+            overflow-wrap: anywhere;
         }
 
-        .flash-box {
-            background: #fff1f0;
-            border: 1px solid #fed2ce;
-            border-left: 4px solid #d9483b;
-            padding: 12px 16px;
-            border-radius: var(--radius-sm);
-            color: #8c271d;
-            font-size: 13.5px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
         }
 
-        .field-group {
-            margin-bottom: 18px;
+        h2 {
+            font-size: 20px;
+            color: #1d4ed8;
+            margin-top: 0;
         }
 
-        .field-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 13.5px;
-            font-weight: 600;
-            color: #4a3a60;
+        .label { color: #64748b; font-size: 14px; }
+
+        .value {
+            font-weight: bold;
+            margin-top: 6px;
+            overflow-wrap: anywhere;
         }
 
-        .field-group input[type="text"] {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #dcd1ea;
-            border-radius: var(--radius-md);
-            background: #faf8fd;
-            color: var(--text-main);
+        .tag {
+            display: inline-block;
+            background: #e0eafe;
+            color: #1e40af;
+            padding: 7px 11px;
+            margin: 4px;
+            border-radius: 18px;
             font-size: 14px;
-            font-family: inherit;
-            outline: none;
-            transition: all 0.2s ease;
         }
 
-        .field-group input[type="text"]:focus {
-            border-color: var(--primary);
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(88, 59, 130, 0.12);
+        li { margin: 9px 0; line-height: 1.5; }
+
+        .progress {
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 12px;
         }
 
-        .field-hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 5px;
-            line-height: 1.4;
-        }
-
-        .file-dropzone {
-            border: 2px dashed #cfc1e3;
-            border-radius: var(--radius-md);
-            background: #faf7fd;
-            padding: 20px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .file-dropzone:hover, .file-dropzone.dragover {
-            border-color: var(--primary);
-            background: #f4eefb;
-        }
-
-        .file-dropzone input[type="file"] {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+        .bar {
             height: 100%;
-            opacity: 0;
-            cursor: pointer;
+            background: #2563eb;
         }
 
-        .file-icon {
-            font-size: 28px;
-            margin-bottom: 6px;
+        .button {
             display: inline-block;
+            padding: 12px 18px;
+            background: #1d4ed8;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 8px 0 25px;
         }
 
-        .file-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary);
-        }
+        .muted { color: #64748b; }
 
-        .file-subtext {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        .selected-file-name {
-            display: none;
-            margin-top: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #2e6930;
-            background: #eaf6eb;
-            padding: 4px 10px;
-            border-radius: 6px;
-            display: inline-block;
-        }
-
-        .submit-btn {
-            width: 100%;
-            margin-top: 10px;
-            padding: 14px 20px;
-            background: linear-gradient(135deg, var(--primary) 0%, #462c6b 100%);
-            color: #ffffff;
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: 15px;
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
-            box-shadow: 0 4px 14px rgba(88, 59, 130, 0.25);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(88, 59, 130, 0.35);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Loading overlay */
-        .loading-state {
-            display: none;
+        footer {
             text-align: center;
-            padding: 20px 10px;
-        }
-
-        .spinner {
-            width: 42px;
-            height: 42px;
-            border: 3.5px solid #e9e1f5;
-            border-top: 3.5px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 0.9s linear infinite;
-            margin: 0 auto 16px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 6px;
-        }
-
-        .loading-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        .footer-info {
-            text-align: center;
-            margin-top: 22px;
-            font-size: 12px;
-            color: #7d728e;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 480px) {
-            .card {
-                padding: 24px 18px;
-            }
-            .brand-header h1 {
-                font-size: 22px;
-            }
+            padding: 20px;
+            color: #64748b;
         }
     </style>
 </head>
 <body>
 
-<div class="auth-container">
+<header>
+    <h2>Resume Screening with Career Guidance</h2>
+</header>
 
-    <div class="brand-header">
-        <div class="brand-badge">
-             Resume Screening  & Career Guidance
+<main>
+    <h1>Resume Analysis Results</h1>
+    <p class="subtitle">
+        Review your resume skills, company match and career opportunities.
+    </p>
+
+    <section class="card">
+        <h2>Candidate Details</h2>
+        <div class="grid">
+            <div>
+                <div class="label">Candidate Name</div>
+                <div class="value">{{ candidate_name or "Not available" }}</div>
+            </div>
+            <div>
+                <div class="label">Register Number</div>
+                <div class="value">{{ register_number or "Not available" }}</div>
+            </div>
+            <div>
+                <div class="label">Target Company</div>
+                <div class="value">{{ target_company or "Not available" }}</div>
+            </div>
         </div>
-        <h1>Resume Screening & Vacancy Finder</h1>
-        <p>Extract structured resume insights, evaluate company match, and discover real vacancies in Tamil Nadu.</p>
-    </div>
+    </section>
 
-    <div class="card">
-
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="flash-box">
-                        <span>⚠️</span>
-                        <span>{{ message }}</span>
+    <div class="grid">
+        <section class="card">
+            <h2>Company Match</h2>
+            {% if match_percentage is not none and match_percentage != "" %}
+                <div style="font-size:34px;font-weight:bold;color:#1d4ed8">
+                    {{ match_percentage }}{% if match_percentage|string|trim and '%' not in (match_percentage|string) %}%{% endif %}
+                </div>
+                <div class="progress">
+                    <div class="bar"
+                         style="width:{{ [[match_percentage|float, 0]|max, 100]|min }}%">
                     </div>
-                {% endfor %}
+                </div>
+            {% else %}
+                <p class="muted">Company match could not be calculated.</p>
             {% endif %}
-        {% endwith %}
 
-        <form id="uploadForm" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+            {% if company_message %}
+                <p>{{ company_message }}</p>
+            {% endif %}
+        </section>
 
-            <div class="field-group">
-                <label for="name">Candidate Name</label>
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="e.g. AnuB"
-                    required
-                    autocomplete="name"
-                >
-            </div>
-
-            <div class="field-group">
-                <label for="register_number">Register Number</label>
-                <input
-                    type="text"
-                    id="register_number"
-                    name="register_number"
-                    placeholder="e.g. 241AI002"
-                    required
-                >
-            </div>
-
-            <div class="field-group">
-                <label for="target_company">Target Company</label>
-                <input
-                    type="text"
-                    id="target_company"
-                    name="target_company"
-                    placeholder="e.g. TCS, Zoho, Infosys, Novitech"
-                    required
-                >
-                <div class="field-hint">
-                    Used strictly for company requirement matching and skills-to-improve analysis.
-                </div>
-            </div>
-
-            <div class="field-group">
-                <label>Resume Document</label>
-                <div class="file-dropzone" id="dropzone">
-                    <input
-                        type="file"
-                        id="resume"
-                        name="resume"
-                        accept=".pdf,.docx,.txt,.rtf,.jpg,.jpeg,.png,.webp"
-                        required
-                        onchange="handleFileSelect(this)"
-                    >
-                    <div class="file-icon">📄</div>
-                    <div class="file-label" id="fileLabel">Click to upload or drag resume here</div>
-                    <div class="file-subtext">PDF, DOCX, TXT, RTF, JPG, PNG, WEBP (Max 15MB)</div>
-                    <div class="selected-file-name" id="selectedFile" style="display:none;"></div>
-                </div>
-            </div>
-
-            <button type="submit" class="submit-btn" id="submitBtn">
-                <span>Analyze Resume & Find Vacancies</span>
-                <span>→</span>
-            </button>
-
-        </form>
-
-        <div class="loading-state" id="loadingState">
-            <div class="spinner"></div>
-            <div class="loading-title">Analyzing Your Resume Profile</div>
-            <div class="loading-desc">
-                Validating resume structure, checking company requirements, and searching live Tamil Nadu Vacancies...
-            </div>
-        </div>
-
+        <section class="card">
+            <h2>Skills</h2>
+            {% if skills %}
+                {% for skill in skills %}
+                    <span class="tag">{{ skill }}</span>
+                {% endfor %}
+            {% else %}
+                <p class="muted">No skills found.</p>
+            {% endif %}
+        </section>
     </div>
 
-    <div class="footer-info">
-        Verified Data Processing • Real-Time Tamil Nadu Vacancies 
+    <section class="card">
+        <h2>Missing Skills</h2>
+        {% if missing_skills %}
+            {% for skill in missing_skills %}
+                <span class="tag">{{ skill }}</span>
+            {% endfor %}
+        {% else %}
+            <p class="muted">No missing skills listed.</p>
+        {% endif %}
+    </section>
+
+    <section class="card">
+        <h2>Education</h2>
+        {% if education %}
+            <ul>
+            {% for item in education %}
+                <li>{{ item }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">No education details found.</p>
+        {% endif %}
+    </section>
+
+    <section class="card">
+        <h2>Certifications</h2>
+        {% if certifications %}
+            <ul>
+            {% for item in certifications %}
+                <li>{{ item }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">No certifications found.</p>
+        {% endif %}
+    </section>
+
+    <section class="card">
+        <h2>Projects</h2>
+        {% if projects %}
+            {% for project in projects %}
+                <div>
+                    {% if project is mapping %}
+                        <h3>{{ project.get('title', 'Project') }}</h3>
+                        {% if project.get('tech_stack') %}
+                            <p><strong>Technologies:</strong> {{ project.get('tech_stack') }}</p>
+                        {% endif %}
+                        {% if project.get('description') %}
+                            <p>{{ project.get('description') }}</p>
+                        {% endif %}
+                    {% else %}
+                        <p>{{ project }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="muted">No projects found.</p>
+        {% endif %}
+    </section>
+
+    <div class="grid">
+        <section class="card">
+            <h2>Internship</h2>
+            {% if internship %}
+                <ul>
+                {% for item in internship %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="muted">No internship details found.</p>
+            {% endif %}
+        </section>
+
+        <section class="card">
+            <h2>Experience</h2>
+            {% if experience %}
+                <ul>
+                {% for item in experience %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="muted">No experience details found.</p>
+            {% endif %}
+        </section>
     </div>
 
-</div>
+    <section class="card">
+        <h2>Suggested Career Roles</h2>
+        {% if probable_roles %}
+            {% for role in probable_roles %}
+                <span class="tag">{{ role }}</span>
+            {% endfor %}
+        {% else %}
+            <p class="muted">No career roles identified.</p>
+        {% endif %}
+    </section>
 
-<script>
-    function handleFileSelect(input) {
-        const file = input.files[0];
-        const selectedFileDiv = document.getElementById('selectedFile');
-        const fileLabel = document.getElementById('fileLabel');
+    <section class="card">
+        <h2>Recommended Courses</h2>
+        {% if recommended_courses %}
+            <ul>
+            {% for course in recommended_courses %}
+                <li>{{ course }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">No course recommendations available.</p>
+        {% endif %}
+    </section>
 
-        if (file) {
-            selectedFileDiv.textContent = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
-            selectedFileDiv.style.display = 'inline-block';
-            fileLabel.textContent = 'Change resume file';
-        } else {
-            selectedFileDiv.style.display = 'none';
-            fileLabel.textContent = 'Click to upload or drag resume here';
-        }
-    }
+    <section class="card">
+        <h2>Relevant Job Vacancies</h2>
+        {% if vacancies %}
+            {% for job in vacancies %}
+                <div>
+                    {% if job is mapping %}
+                        <h3>{{ job.get('title', job.get('job_title', 'Job Opportunity')) }}</h3>
+                        {% if job.get('company') %}
+                            <p><strong>Company:</strong> {{ job.get('company') }}</p>
+                        {% endif %}
+                        {% if job.get('location') %}
+                            <p><strong>Location:</strong> {{ job.get('location') }}</p>
+                        {% endif %}
+                        {% if job.get('description') %}
+                            <p>{{ job.get('description') }}</p>
+                        {% endif %}
+                        {% if job.get('redirect_url') %}
+                            <a href="{{ job.get('redirect_url') }}" target="_blank" rel="noopener noreferrer">View vacancy</a>
+                        {% elif job.get('url') %}
+                            <a href="{{ job.get('url') }}" target="_blank" rel="noopener noreferrer">View vacancy</a>
+                        {% endif %}
+                    {% else %}
+                        <p>{{ job }}</p>
+                    {% endif %}
+                    <hr>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="muted">No matching vacancies are available right now.</p>
+        {% endif %}
+    </section>
 
-    const dropzone = document.getElementById('dropzone');
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropzone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            dropzone.classList.add('dragover');
-        }, false);
-    });
+    <a class="button" href="{{ url_for('index') }}">← Screen Another Resume</a>
+</main>
 
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropzone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            dropzone.classList.remove('dragover');
-        }, false);
-    });
-
-    const form = document.getElementById('uploadForm');
-    const loadingState = document.getElementById('loadingState');
-
-    form.addEventListener('submit', function() {
-        form.style.display = 'none';
-        loadingState.style.display = 'block';
-    });
-</script>
+<footer>
+    Resume Screening with Career Guidance
+</footer>
 
 </body>
 </html>
