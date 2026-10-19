@@ -4,6 +4,11 @@ import json
 import re
 import uuid
 
+from dotenv import load_dotenv
+
+# Load environment variables before importing config.
+load_dotenv()
+
 from flask import (
     Flask,
     flash,
@@ -14,7 +19,6 @@ from flask import (
 )
 
 from werkzeug.utils import secure_filename
-from dotenv import load_dotenv
 from google import genai
 
 from config import (
@@ -42,14 +46,15 @@ from vacancy_finder import get_resume_based_vacancies
 # APP SETUP
 # ============================================================
 
-load_dotenv()
-
 app = Flask(
     __name__,
     template_folder="templates"
 )
 
 app.secret_key = FLASK_SECRET_KEY
+
+# Maximum upload size: 15 MB.
+app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024
 
 os.makedirs(
     UPLOAD_FOLDER,
@@ -111,6 +116,22 @@ def normalize_result(result):
 
     for field, default_value in default_fields.items():
         result.setdefault(field, default_value)
+
+    # Ensure fields used as lists are lists.
+    list_fields = [
+        "skills",
+        "education",
+        "certifications",
+        "projects",
+        "internship",
+        "experience",
+        "probable_roles",
+        "recommended_courses",
+    ]
+
+    for field in list_fields:
+        if not isinstance(result.get(field), list):
+            result[field] = []
 
     return result
 
@@ -220,6 +241,7 @@ Rules:
 
         models_to_try = [GEMINI_MODEL]
 
+        # Preserve the existing fallback model.
         fallback_model = "gemini-3.5-flash"
 
         if fallback_model not in models_to_try:
@@ -279,7 +301,9 @@ Rules:
             if start == -1 or end == -1:
                 return {}
 
-            result = json.loads(text[start:end + 1])
+            result = json.loads(
+                text[start:end + 1]
+            )
 
         return normalize_result(result)
 
@@ -391,15 +415,18 @@ def upload():
         uploaded_file.save(file_path)
 
     except Exception as error:
-        print("FILE SAVE ERROR:", repr(error))
+        print(
+            "FILE SAVE ERROR:",
+            repr(error)
+        )
         flash("Unable to save the uploaded file.")
         return redirect(url_for("index"))
 
-    # --------------------------------------------------------
-    # PROCESS RESUME
-    # --------------------------------------------------------
-
     try:
+        # ----------------------------------------------------
+        # PROCESS RESUME
+        # ----------------------------------------------------
+
         if extension in {"pdf", "docx", "txt", "rtf"}:
             resume_text = extract_resume_text(file_path)
 
@@ -407,7 +434,9 @@ def upload():
                 flash("Could not extract text from this file.")
                 return redirect(url_for("index"))
 
-            resume_result = analyze_text_resume(resume_text)
+            resume_result = analyze_text_resume(
+                resume_text
+            )
 
             validation = validate_text_resume(
                 resume_text,
@@ -415,7 +444,9 @@ def upload():
             )
 
         else:
-            resume_result = analyze_image_resume(file_path)
+            resume_result = analyze_image_resume(
+                file_path
+            )
 
             validation = validate_gemini_result(
                 resume_result
@@ -430,10 +461,77 @@ def upload():
                 validation["message"]
                 or "The uploaded file is not a valid resume."
             )
-
             return redirect(url_for("index"))
 
-        resume_result = normalize_result(resume_result)
+        resume_result = normalize_result(
+            resume_result
+        )
+
+        # ----------------------------------------------------
+        # DEBUG INFORMATION
+        # ----------------------------------------------------
+
+        print("\n========== RESUME DEBUG ==========")
+        print("Upload ID:", filename)
+        print("Form Candidate Name:", candidate_name)
+        print(
+            "Parsed Resume Name:",
+            resume_result.get("candidate_name")
+        )
+        print("Skills:", resume_result.get("skills"))
+        print("Education:", resume_result.get("education"))
+        print(
+            "Certifications:",
+            resume_result.get("certifications")
+        )
+        print("Projects:", resume_result.get("projects"))
+        print(
+            "Career Roles:",
+            resume_result.get("probable_roles")
+        )
+        print(
+            "Recommended Courses:",
+            resume_result.get("recommended_courses")
+        )
+        print("==================================\n")
+
+        # ----------------------------------------------------
+        # RESUME-BASED VACANCIES
+        # Existing Adzuna search logic is preserved.
+        # Do not change this call without checking vacancy_finder.py.
+        # ----------------------------------------------------
+
+        resume_skills = resume_result.get("skills", [])
+        probable_roles = resume_result.get("probable_roles", [])
+
+        try:
+            vacancies = get_resume_based_vacancies(
+                resume_skills=resume_skills,
+                probable_roles=probable_roles
+            )
+
+        except Exception as error:
+            print(
+                "VACANCY SEARCH ERROR:",
+                repr(error)
+            )
+            vacancies = []
+
+        # ----------------------------------------------------
+        # RESULT
+        # ----------------------------------------------------
+
+        result_data = build_result_data(
+            candidate_name=candidate_name,
+            register_number=register_number,
+            resume_result=resume_result,
+            vacancies=vacancies,
+        )
+
+        return render_template(
+            "result.html",
+            **result_data
+        )
 
     except Exception as error:
         print(
@@ -444,58 +542,27 @@ def upload():
         flash("Unable to process the uploaded resume.")
         return redirect(url_for("index"))
 
-    # --------------------------------------------------------
-    # DEBUG INFORMATION
-    # --------------------------------------------------------
+    finally:
+        # Remove the temporary uploaded file after processing.
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
 
-    print("\n========== RESUME DEBUG ==========")
-    print("Upload ID:", filename)
-    print("Form Candidate Name:", candidate_name)
-    print("Parsed Resume Name:", resume_result.get("candidate_name"))
-    print("Skills:", resume_result.get("skills"))
-    print("Education:", resume_result.get("education"))
-    print("Certifications:", resume_result.get("certifications"))
-    print("Projects:", resume_result.get("projects"))
-    print("Career Roles:", resume_result.get("probable_roles"))
-    print("==================================\n")
+        except OSError as error:
+            print(
+                "TEMPORARY FILE CLEANUP ERROR:",
+                repr(error)
+            )
 
-    # --------------------------------------------------------
-    # RESUME-BASED VACANCIES
-    # Existing Adzuna search logic is preserved.
-    # --------------------------------------------------------
 
-    resume_skills = resume_result.get("skills", [])
-    probable_roles = resume_result.get("probable_roles", [])
+# ============================================================
+# FILE TOO LARGE
+# ============================================================
 
-    try:
-        vacancies = get_resume_based_vacancies(
-            resume_skills=resume_skills,
-            probable_roles=probable_roles
-        )
-
-    except Exception as error:
-        print(
-            "VACANCY SEARCH ERROR:",
-            repr(error)
-        )
-
-        vacancies = []
-
-    # --------------------------------------------------------
-    # RESULT
-    # --------------------------------------------------------
-
-    result_data = build_result_data(
-        candidate_name=candidate_name,
-        register_number=register_number,
-        resume_result=resume_result,
-        vacancies=vacancies,
-    )
-
-    return render_template(
-        "result.html",
-        **result_data
-    )
+@app.errorhandler(413)
+def file_too_large(error):
+    flash("The uploaded file exceeds the 15 MB limit.")
+    return redirect(url_for("index"))
 
 
 # ============================================================
@@ -508,3 +575,4 @@ if __name__ == "__main__":
         port=5001,
         debug=True
     )
+```
