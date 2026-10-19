@@ -74,19 +74,6 @@
 
         li { margin: 9px 0; line-height: 1.5; }
 
-        .progress {
-            height: 12px;
-            background: #e2e8f0;
-            border-radius: 20px;
-            overflow: hidden;
-            margin-top: 12px;
-        }
-
-        .bar {
-            height: 100%;
-            background: #2563eb;
-        }
-
         .button {
             display: inline-block;
             padding: 12px 18px;
@@ -134,6 +121,7 @@
 
    <section class="card">
     <h2>Skills Extracted from Resume</h2>
+
     {% if skills %}
         {% for skill in skills %}
             <span class="tag">{{ skill }}</span>
