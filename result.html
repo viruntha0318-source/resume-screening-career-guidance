@@ -115,7 +115,7 @@
 <main>
     <h1>Resume Analysis Results</h1>
     <p class="subtitle">
-        Review your resume skills, company match and career opportunities.
+        Review your resume skills, career guidance and live job opportunities.
     </p>
 
     <section class="card">
@@ -129,57 +129,19 @@
                 <div class="label">Register Number</div>
                 <div class="value">{{ register_number or "Not available" }}</div>
             </div>
-            <div>
-                <div class="label">Target Company</div>
-                <div class="value">{{ target_company or "Not available" }}</div>
-            </div>
         </div>
     </section>
 
-    <div class="grid">
-        <section class="card">
-            <h2>Company Match</h2>
-            {% if match_percentage is not none and match_percentage != "" %}
-                <div style="font-size:34px;font-weight:bold;color:#1d4ed8">
-                    {{ match_percentage }}{% if match_percentage|string|trim and '%' not in (match_percentage|string) %}%{% endif %}
-                </div>
-                <div class="progress">
-                    <div class="bar"
-                         style="width:{{ [[match_percentage|float, 0]|max, 100]|min }}%">
-                    </div>
-                </div>
-            {% else %}
-                <p class="muted">Company match could not be calculated.</p>
-            {% endif %}
-
-            {% if company_message %}
-                <p>{{ company_message }}</p>
-            {% endif %}
-        </section>
-
-        <section class="card">
-            <h2>Skills</h2>
-            {% if skills %}
-                {% for skill in skills %}
-                    <span class="tag">{{ skill }}</span>
-                {% endfor %}
-            {% else %}
-                <p class="muted">No skills found.</p>
-            {% endif %}
-        </section>
-    </div>
-
-    <section class="card">
-        <h2>Missing Skills</h2>
-        {% if missing_skills %}
-            {% for skill in missing_skills %}
-                <span class="tag">{{ skill }}</span>
-            {% endfor %}
-        {% else %}
-            <p class="muted">No missing skills listed.</p>
-        {% endif %}
-    </section>
-
+   <section class="card">
+    <h2>Skills Extracted from Resume</h2>
+    {% if skills %}
+        {% for skill in skills %}
+            <span class="tag">{{ skill }}</span>
+        {% endfor %}
+    {% else %}
+        <p class="muted">No skills found.</p>
+    {% endif %}
+</section>
     <section class="card">
         <h2>Education</h2>
         {% if education %}
