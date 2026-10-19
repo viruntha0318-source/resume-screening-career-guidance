@@ -823,49 +823,233 @@ def extract_experience(text, sections=None):
 
     return unique_list(result)
 
-
 # =========================================================
 # PROBABLE ROLES
 # =========================================================
 
 def infer_probable_roles(skills, education, projects, text=""):
     roles = []
-    skill_keys = {normalize_key(s) for s in skills}
+    skill_keys = {normalize_key(skill) for skill in skills}
 
-    project_text = " ".join([
-        clean_text(p.get("title", "")) + " " +
-        clean_text(p.get("tech_stack", "")) + " " +
-        clean_text(p.get("description", ""))
-        for p in projects if isinstance(p, dict)
-    ]).lower()
+    project_text = " ".join(
+        clean_text(project.get("title", "")) + " " +
+        clean_text(project.get("tech_stack", "")) + " " +
+        clean_text(project.get("description", ""))
+        for project in projects
+        if isinstance(project, dict)
+    ).lower()
 
-    full_text = (project_text + " " + " ".join(education) + " " + clean_text(text)).lower()
+    education_text = " ".join(education).lower()
+    full_text = (
+        project_text + " " + education_text + " " +
+        clean_text(text).lower()
+    )
 
-    # UI/UX
-    if "ui/ux design" in skill_keys or "figma" in skill_keys or "ui/ux" in full_text:
+    # UI/UX Design
+    if (
+        "ui/ux design" in skill_keys
+        or "figma" in skill_keys
+        or "ui/ux" in full_text
+    ):
         roles.append("UI/UX Designer")
 
     # Web Development
-    if ("html" in skill_keys and "css" in skill_keys) or "javascript" in skill_keys or "react" in skill_keys:
+    if (
+        {"html", "css"}.issubset(skill_keys)
+        or "javascript" in skill_keys
+        or "react" in skill_keys
+        or "web development" in full_text
+    ):
         roles.append("Web Developer")
 
-    # Python Developer
-    if "python" in skill_keys:
+    # Python Development
+    if (
+        "python" in skill_keys
+        or "python developer" in full_text
+    ):
         roles.append("Python Developer")
 
+    # Java Development
+    if "java" in skill_keys:
+        roles.append("Java Developer")
+
     # AI / Machine Learning
-    if any(k in skill_keys for k in ["nlp", "machine learning", "deep learning", "artificial intelligence"]) or "artificial intelligence" in full_text:
+    if (
+        any(skill in skill_keys for skill in [
+            "nlp",
+            "machine learning",
+            "deep learning",
+            "artificial intelligence",
+            "tensorflow",
+            "pytorch",
+            "scikit-learn",
+        ])
+        or "artificial intelligence" in full_text
+    ):
         roles.append("AI/ML Intern")
 
     # Cybersecurity
-    if "cybersecurity" in skill_keys or "cybersecurity" in full_text:
+    if (
+        "cybersecurity" in skill_keys
+        or "cybersecurity" in full_text
+    ):
         roles.append("Cybersecurity Intern")
 
-    # Data Analyst
-    if "data analysis" in skill_keys or "power bi" in skill_keys or "sql" in skill_keys:
+    # Data Analysis
+    if any(skill in skill_keys for skill in [
+        "data analysis",
+        "power bi",
+        "tableau",
+        "excel",
+        "sql",
+        "pandas",
+        "numpy",
+    ]):
         roles.append("Data Analyst Trainee")
 
+    # Database roles
+    if any(skill in skill_keys for skill in [
+        "mysql",
+        "postgresql",
+        "mongodb",
+        "sqlite",
+    ]):
+        roles.append("Database Developer Trainee")
+
+    # Backend development
+    if any(skill in skill_keys for skill in [
+        "flask",
+        "django",
+        "fastapi",
+        "node.js",
+        "express.js",
+        "spring boot",
+    ]):
+        roles.append("Backend Developer")
+
+    # Cloud / DevOps
+    if any(skill in skill_keys for skill in [
+        "aws",
+        "azure",
+        "gcp",
+        "docker",
+        "kubernetes",
+        "linux",
+    ]):
+        roles.append("Cloud / DevOps Trainee")
+
     return unique_list(roles)
+
+
+# =========================================================
+# RECOMMENDED COURSES
+# =========================================================
+
+def recommend_courses(skills, probable_roles):
+    """
+    Suggest learning topics based on extracted skills and roles.
+    These are suggestions, not claims that the student completed
+    any course or has a certification.
+    """
+
+    skill_keys = {normalize_key(skill) for skill in skills}
+    role_keys = {normalize_key(role) for role in probable_roles}
+
+    courses = []
+
+    def add_course(course):
+        if course not in courses:
+            courses.append(course)
+
+    # Python
+    if (
+        "python" in skill_keys
+        or "python developer" in role_keys
+    ):
+        add_course("Advanced Python Programming")
+        add_course("Python Application Development")
+
+    # Web development
+    if any(skill in skill_keys for skill in [
+        "html", "css", "javascript", "react",
+        "node.js", "bootstrap", "tailwind css",
+    ]) or "web developer" in role_keys:
+        add_course("Full-Stack Web Development")
+        add_course("Responsive Web Design")
+
+    # Java
+    if "java" in skill_keys:
+        add_course("Object-Oriented Programming with Java")
+        add_course("Java Application Development")
+
+    # AI and Machine Learning
+    if any(skill in skill_keys for skill in [
+        "machine learning",
+        "deep learning",
+        "artificial intelligence",
+        "nlp",
+        "tensorflow",
+        "pytorch",
+        "scikit-learn",
+    ]) or "ai/ml intern" in role_keys:
+        add_course("Machine Learning Fundamentals")
+        add_course("Introduction to Artificial Intelligence")
+
+    # Data analytics
+    if any(skill in skill_keys for skill in [
+        "data analysis", "power bi", "tableau",
+        "excel", "pandas", "numpy", "sql",
+    ]) or "data analyst trainee" in role_keys:
+        add_course("Data Analytics Fundamentals")
+        add_course("SQL for Data Analysis")
+
+    # UI/UX
+    if (
+        "ui/ux design" in skill_keys
+        or "figma" in skill_keys
+        or "ui/ux designer" in role_keys
+    ):
+        add_course("UI/UX Design Fundamentals")
+        add_course("Figma for Interface Design")
+
+    # Cybersecurity
+    if (
+        "cybersecurity" in skill_keys
+        or "cybersecurity intern" in role_keys
+    ):
+        add_course("Cybersecurity Fundamentals")
+        add_course("Network Security Basics")
+
+    # Backend
+    if any(skill in skill_keys for skill in [
+        "flask", "django", "fastapi",
+        "node.js", "express.js", "spring boot",
+    ]) or "backend developer" in role_keys:
+        add_course("REST API Development")
+        add_course("Backend Application Development")
+
+    # Cloud and DevOps
+    if any(skill in skill_keys for skill in [
+        "aws", "azure", "gcp", "docker",
+        "kubernetes", "linux",
+    ]) or "cloud / devops trainee" in role_keys:
+        add_course("Cloud Computing Fundamentals")
+        add_course("Docker and DevOps Fundamentals")
+
+    # Database
+    if any(skill in skill_keys for skill in [
+        "mysql", "postgresql", "mongodb", "sqlite",
+    ]) or "database developer trainee" in role_keys:
+        add_course("Database Design and SQL")
+        add_course("Database Management Fundamentals")
+
+    # General beginner guidance if no rules matched
+    if not courses:
+        add_course("Programming Fundamentals")
+        add_course("Problem Solving and Data Structures")
+        add_course("Git and GitHub Fundamentals")
+
+    return courses[:6]
 
 
 # =========================================================
@@ -883,7 +1067,18 @@ def analyze_text_resume(text):
     projects = extract_projects(text, sections)
     internship = extract_internship(text, sections)
     experience = extract_experience(text, sections)
-    probable_roles = infer_probable_roles(skills, education, projects, text)
+
+    probable_roles = infer_probable_roles(
+        skills=skills,
+        education=education,
+        projects=projects,
+        text=text,
+    )
+
+    recommended_courses = recommend_courses(
+        skills=skills,
+        probable_roles=probable_roles,
+    )
 
     return {
         "candidate_name": candidate_name,
@@ -894,4 +1089,5 @@ def analyze_text_resume(text):
         "internship": internship,
         "experience": experience,
         "probable_roles": probable_roles,
+        "recommended_courses": recommended_courses,
     }
